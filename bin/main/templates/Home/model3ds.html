@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<head>
+<script src="https://cesium.com/downloads/cesiumjs/releases/1.113/Build/Cesium/Cesium.js"></script>
+<link href="https://cesium.com/downloads/cesiumjs/releases/1.113/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+</head>
+<body>
+	<!-- Cesium 띄우는 화면 -->
+	<div id="cesiumContainer" style="width: auto; height: 600px;"></div>
+	<div>
+		<h2>3차원 모델 만들기</h2>
+		<input type="button" id="boxbutton" value="3D 상자" onclick="makeBox();"> 
+		<input type="button" id="cylinderbutton" value="3D 원기둥" onclick="makeCylinder();">
+	</div>
+</body>
+<script>
+/* Cesium 토큰 값 설정 */
+Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1MTU5MWNmMy0yZjE0LTQ5YjUtOTBiYi0xN2I3ZWFjZGVlZWEiLCJpZCI6MTkxMDg1LCJpYXQiOjE3MDU4ODQ1NzB9.5NQB1bmWiTj-JHgLYOu3Z2TXjpksow0vt-TWQWuruls';
+
+/* 애플리케이션 구축을 위한 기본 위젯 */
+var viewer = new Cesium.Viewer('cesiumContainer',{
+	terrainProvider : Cesium.createWorldTerrain()
+});
+
+const buildingsTileset = viewer.scene.primitives.add(Cesium.cretaeOsmBuildings());
+viewer.camera.flyTo({
+	destination:Cesium.Cartesian3.fromDegrees(-104.9965, 39.74248, 4000)
+});
+
+async function addBuildingGeoJSON(){
+	const geoJSONURL = await Cesium.IonResource.fromAssetId(your_asset_id_1);
+	const geoJSON = await Cesium.GeoJsonDataSource.load(geoJSONURL, {clampToGround:true});
+	const dataSource = await viewer.dataSources.add(geoJSON);
+	
+	for(const entity of dataSource.entities.values){
+		entity.polygon.classificationType = Cesium.ClassificationType.TERRAIN;
+	}
+	
+	viewer.flyTo(dataSource);
+}
+
+addBuildingGeoJSON();
+
+buildingsTileset.style = new Cesium.Cesium3DTileStyle({
+	show: {
+		conditions:[
+	          ['${elementId} === 532245203', false],
+	          ['${elementId} === 332469316', false],
+	          ['${elementId} === 332469317', false],
+	          ['${elementId} === 235368665', false],
+	          ['${elementId} === 530288180', false],
+	          ['${elementId} === 530288179', false],
+	          [true, true]
+		]
+	},
+	color : "Boolean(${feature['cesium#color']})?color(${feature['cesium#color']}):color('#ffffff')"
+});
+
+const newBuildingTileset = viewer.scene.primitives.add(
+	new Cesium.Cesium3DTileset({
+		url : Cesium.IonResource.fromAssetId(your_asset_id_2)
+	})		
+);
+
+viewer.flyTo(newBuildingTileset);
+
+document.querySelector('#toggle-building').onclick = function(){
+	newBuildingTileset.show = !newBuildingTileset.show;
+};
+
+
+</script>
+</html>

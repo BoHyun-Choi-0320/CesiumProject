@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<head>
+<script src="https://cesium.com/downloads/cesiumjs/releases/1.113/Build/Cesium/Cesium.js"></script>
+<link href="https://cesium.com/downloads/cesiumjs/releases/1.113/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+</head>
+<body>
+	<!-- Cesium 띄우는 화면 -->
+	<div id="cesiumContainer" style="width: auto; height: 600px;"></div>
+	<div>
+		<h2>3차원 모델 만들기</h2>
+		<input type="button" id="boxbutton" value="3D 상자" onclick="makeBox();"> 
+		<input type="button" id="cylinderbutton" value="3D 원기둥" onclick="makeCylinder();">
+	</div>
+</body>
+<script>
+/* 경계와 위도가 정해진 직사각형 생성 */
+var extent = Cesium.Rectangle.fromDegrees(117.896284, 31.499028, 139.597380, 43.311528);
+
+/* 생성 시, 카메라가 보게 될 기본 직사각형 설정 */
+Cesium.Camera.DEFAULT_VIEW_RECTANGLE = extent;
+/* 0은 카메라가 전체를 비춤, 0보다 크면 더 멀리 이동, 0보다 작으면 범위에 가깝게 이동*/
+Cesium.Camera.DEFAULT_VIEW_FACTOR = 0.7;
+
+/* Cesium 토큰 값 설정 */
+Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1MTU5MWNmMy0yZjE0LTQ5YjUtOTBiYi0xN2I3ZWFjZGVlZWEiLCJpZCI6MTkxMDg1LCJpYXQiOjE3MDU4ODQ1NzB9.5NQB1bmWiTj-JHgLYOu3Z2TXjpksow0vt-TWQWuruls';
+
+/* 애플리케이션 구축을 위한 기본 위젯 */
+var viewer = new Cesium.Viewer('cesiumContainer',
+	{
+		timeline : false,
+		animation : false,
+		selectionIndicator : false,
+		navigationHelpButton : false,
+		infoBox : false,
+		navigationInstructionsInitiallyVisible : false
+	});
+	
+	
+function makeBox(){
+	var box = viewer.entities.add({
+		name:'Box',
+		position: Cesium.Cartesian3.fromDegrees(126.924403, 37.524624, 255.0), /* 3D 데카르트 점 */
+		box : {
+			dimensions : new Cesium.Cartesian3(500.0, 500.0, 500.0),
+			material : Cesium.Color.WHITE,
+			outline : false,
+			outlinecolor : Cesium.Color.BLACK
+		}
+	});
+	
+	viewer.zoomTo(viewer.entities);
+	alert('3D 상자를 생성합니다.');
+}
+
+function makeCylinder(){
+	var cylinder = viewer.entities.add({
+		name : 'Cylinder',
+		position : Cesium.Cartesian3.fromDegrees(126.907195, 37.526650, 255.0),
+		cylinder : {
+			length : 490,
+			topRadius : 200,
+			bottomRadius : 200, 
+			material : Cesium.Color.WHITE,
+			outline : false,
+			outlinecolor : Cesium.Color.BLACK
+		}
+	});
+	viewer.zoomTo(viewer.entities);
+	alert('3D 원기둥을 생성합니다.');
+}
+
+function make3DS(){
+	
+}
+</script>
+</html>
